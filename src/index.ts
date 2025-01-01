@@ -24,7 +24,6 @@ const corsOptions = {
   origin: '*',  // Allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allow relevant HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With'],  // Add any headers you need
-  credentials: true,  // If needed, but likely not necessary for public APIs
 };
 
 app.use(cors(corsOptions));
