@@ -104,6 +104,19 @@ const otakudesuController = {
     }
   },
 
+
+  async getGenreAnimes(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = getPageParam(req);
+      const { genreId } = req.params;
+      const { data, pagination } = await parser.parseGenreAnimes(genreId, page);
+
+      res.json(generatePayload(res, { data, pagination }));
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async getAnimeDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const { animeId } = req.params;
