@@ -11,19 +11,20 @@ import cors from "cors";
 const { PORT } = animeConfig;
 const app = express();
 
-// MIDDLEWARES
-app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));
-app.use(clientCache(1));
+// Middlewares
+// Allow all origins
+app.use(cors({ origin: '*' }));
+app.use(clientCache(1)); // Custom caching middleware
 
-// RUTE SUMBER
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Routes
 app.use(otakudesuInfo.baseUrlPath, otakudesuRoute);
 app.use(samehadakuInfo.baseUrlPath, samehadakuRoute);
-
-// RUTE UTAMA
 app.use(mainRoute);
 
-// ERROR HANDLER
+// Error handling
 app.use(errorHandler);
 
 app.listen(PORT, () => {
