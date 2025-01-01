@@ -104,25 +104,23 @@ const otakudesuController = {
     }
   },
 
-  async getGenreAnimes(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const page = getPageParam(req);
-      const { genreId } = req.params;
-      const { data, pagination } = await parser.parseGenreAnimes(genreId, page);
-
-      res.json(generatePayload(res, { data, pagination }));
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  async getAnimeDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAnimeDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const { animeId } = req.params;
+  
+      console.log(`[DEBUG] Fetching details for Anime ID: ${animeId}`);
+      console.log(`[DEBUG] Headers:`, req.headers);
+  
       const data = await parser.parseAnimeDetails(animeId);
-
+  
+      if (!data) {
+        console.warn(`[WARN] No data found for Anime ID: ${animeId}`);
+        return res.status(404).json({ error: 'Anime not found' });
+      }
+  
       res.json(generatePayload(res, { data }));
     } catch (error) {
+     
       next(error);
     }
   },

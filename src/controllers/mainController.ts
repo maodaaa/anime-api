@@ -10,11 +10,14 @@ const mainController = {
   getMainView(req: Request, res: Response, next: NextFunction): void {
     try {
       const getViewFile = (filePath: string) => {
-        return path.join(__dirname, "..", "public", "views", filePath);
+        const fullPath = path.join(__dirname, "..", "public", "views", filePath);
+        console.log("[DEBUG] Serving file:", fullPath);  // Log the path
+        return fullPath;
       };
 
       res.sendFile(getViewFile("home.html"));
     } catch (error) {
+      console.error("[ERROR] Error in getMainView:", error);
       next(error);
     }
   },
@@ -38,7 +41,9 @@ const mainController = {
         };
 
         data.sources.forEach((source) => {
-          const exist = fs.existsSync(path.join(__dirname, "..", "anims", source.baseUrlPath));
+          const sourcePath = path.join(__dirname, "..", "anims", source.baseUrlPath);
+          console.log("[DEBUG] Checking if source path exists:", sourcePath); // Log path
+          const exist = fs.existsSync(sourcePath);
 
           if (exist) {
             newData.sources.push({
@@ -52,9 +57,10 @@ const mainController = {
       }
 
       const data = getData();
-
+      console.log("[DEBUG] Data to send:", data); // Log data
       res.json(generatePayload(res, { data }));
     } catch (error) {
+      console.error("[ERROR] Error in getMainViewData:", error);
       next(error);
     }
   },
