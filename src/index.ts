@@ -14,6 +14,8 @@ const app = express();
 // Middlewares
 // Allow all origins
 app.use(cors({ origin: '*' }));
+app.use(express.json()); // Parse JSON payloads
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded payloads
 app.use(clientCache(1)); // Custom caching middleware
 
 // Serve static files
