@@ -19,18 +19,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS configuration
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (e.g., server-side clients like Postman)
-    if (!origin) return callback(null, true);
-    // Allow all origins (for development). Use a whitelist for production.
-    callback(null, true);
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
-  allowedHeaders: '*', // Allow all headers
-  credentials: true, // If you need to support cookies or authentication
-}));
+
+const corsOptions = {
+  origin: '*',  // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allow relevant HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With'],  // Add any headers you need
+  credentials: true,  // If needed, but likely not necessary for public APIs
+};
+
+app.use(cors(corsOptions));
 
 // Middleware for parsing request bodies
 app.use(express.json());
