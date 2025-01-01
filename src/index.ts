@@ -11,18 +11,25 @@ import cors from "cors";
 const { PORT } = animeConfig;
 const app = express();
 
-// Middleware to log incoming requests for debugging
+// Debugging middleware
 app.use((req, res, next) => {
   console.log(`[DEBUG] ${req.method} ${req.url}`);
-  console.log(`[DEBUG] Origin: ${req.headers.origin}`);
+  console.log(`[DEBUG] Origin: ${req.headers.origin || 'No Origin'}`);
+  console.log(`[DEBUG] User-Agent: ${req.headers['user-agent']}`);
   next();
 });
 
-// CORS Configuration: Allow all origins (for debugging/development)
+// CORS configuration
 app.use(cors({
-  origin: '*', // Allow all origins
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow common HTTP methods
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., server-side clients like Postman)
+    if (!origin) return callback(null, true);
+    // Allow all origins (for development). Use a whitelist for production.
+    callback(null, true);
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
   allowedHeaders: '*', // Allow all headers
+  credentials: true, // If you need to support cookies or authentication
 }));
 
 // Middleware for parsing request bodies
@@ -32,13 +39,16 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Custom client-side cache middleware
-app.use(clientCache(1));
+// Custom client-side caching middleware
+app.use(clientCache(1)); // Assuming this is your custom middleware
 
 // Routes
-app.use(otakudesuInfo.baseUrlPath, otakudesuRoute);
-app.use(samehadakuInfo.baseUrlPath, samehadakuRoute);
-app.use(mainRoute);
+app.use('/otakudesu', otakudesuRoute); // Example route
+app.use('/samehadaku', samehadakuRoute); // Another route
+app.use(mainRoute); // Catch-all main route
+
+// Handle preflight requests (CORS OPTIONS)
+app.options('*', cors()); // Allow preflight for all routes
 
 // Error handling
 app.use(errorHandler);
